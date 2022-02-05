@@ -1,5 +1,11 @@
 # slate-react
 
+## 0.72.9
+
+### Patch Changes
+
+- [#4819](https://github.com/ianstormtaylor/slate/pull/4819) [`80661509`](https://github.com/ianstormtaylor/slate/commit/80661509ecf39b5d8256fa387c7eff15f60bf612) Thanks [@ugaya40](https://github.com/ugaya40)! - Fix a possible update of react state after Slate component is unmounted
+
 ## 0.72.8
 
 ### Patch Changes
