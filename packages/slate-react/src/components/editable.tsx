@@ -93,6 +93,7 @@ export interface RenderLeafProps {
  */
 
 export type EditableProps = {
+  aftrpartyParentHeight?: string
   decorate?: (entry: NodeEntry) => Range[]
   onDOMBeforeInput?: (event: InputEvent) => void
   placeholder?: string
@@ -110,7 +111,8 @@ export type EditableProps = {
  * Editable.
  */
 
-export const Editable = (props: EditableProps) => {
+export const Editable = (p: EditableProps) => {
+  const { aftrpartyParentHeight, ...props } = p
   const {
     autoFocus,
     decorate = defaultDecorate,
@@ -1306,6 +1308,10 @@ export const Editable = (props: EditableProps) => {
             renderPlaceholder={renderPlaceholder}
             renderLeaf={renderLeaf}
             selection={editor.selection}
+            aftrpartyOptions={{
+              isEditable: true,
+              parentHeight: aftrpartyParentHeight,
+            }}
           />
         </Component>
       </DecorateContext.Provider>

@@ -27,7 +27,12 @@ const HugeDocumentExample = () => {
   const editor = useMemo(() => withReact(createEditor()), [])
   return (
     <Slate editor={editor} value={value} onChange={value => setValue(value)}>
-      <Editable renderElement={renderElement} spellCheck autoFocus />
+      <Editable
+        aftrpartyParentHeight="80vh"
+        renderElement={renderElement}
+        spellCheck
+        autoFocus
+      />
     </Slate>
   )
 }

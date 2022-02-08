@@ -1,5 +1,6 @@
 import React from 'react'
 import { Editor, Range, Element, Ancestor, Descendant } from 'slate'
+import { useVirtual } from 'react-virtual'
 
 import ElementComponent from '../components/element'
 import TextComponent from '../components/text'
@@ -18,6 +19,10 @@ import { SelectedContext } from './use-selected'
  * Children.
  */
 
+interface CustomOptions {
+  isEditable?: boolean
+  parentHeight?: string
+}
 const useChildren = (props: {
   decorations: Range[]
   node: Ancestor
@@ -25,7 +30,11 @@ const useChildren = (props: {
   renderPlaceholder: (props: RenderPlaceholderProps) => JSX.Element
   renderLeaf?: (props: RenderLeafProps) => JSX.Element
   selection: Range | null
+  aftrpartyOptions?: CustomOptions
 }) => {
+  const { isEditable, parentHeight } = props.aftrpartyOptions ?? {}
+  const parentRef = React.useRef<HTMLDivElement>(null)
+
   const {
     decorations,
     node,
@@ -34,10 +43,15 @@ const useChildren = (props: {
     renderLeaf,
     selection,
   } = props
+
+  const rowVirtualizer = useVirtual({
+    size: node.children.length,
+    parentRef,
+  })
   const decorate = useDecorate()
   const editor = useSlateStatic()
   const path = ReactEditor.findPath(editor, node)
-  const children = []
+  const children: React.ReactNode[] = []
   const isLeafBlock =
     Element.isElement(node) &&
     !editor.isInline(node) &&
@@ -90,8 +104,44 @@ const useChildren = (props: {
     NODE_TO_INDEX.set(n, i)
     NODE_TO_PARENT.set(n, node)
   }
-
-  return children
+  if (!isEditable) {
+    return children
+  }
+  return (
+    <div
+      ref={parentRef}
+      style={{
+        height: parentHeight ?? '100vh',
+        width: '100%',
+        overflow: 'auto',
+      }}
+    >
+      <div
+        style={{
+          height: `${rowVirtualizer.totalSize}px`,
+          position: 'relative',
+          width: '100%',
+          color: 'inherit',
+        }}
+      >
+        {rowVirtualizer.virtualItems.map(virtualRow => (
+          <div
+            key={virtualRow.index}
+            ref={virtualRow.measureRef}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              transform: `translateY(${virtualRow.start}px)`,
+            }}
+          >
+            <div>{children[virtualRow.index]}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
 }
 
 export default useChildren
